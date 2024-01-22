@@ -1,5 +1,6 @@
 import "./App.css";
 import CollectionReport from "./components/CollectionReport";
+import DashBoardDeatils from "./components/DashBoardDeatils";
 import DataGridPremiumDemo from "./components/DataGridChart";
 import DuePolicies from "./components/DuePolicies";
 import LapsedPolicies from "./components/LapsedPolicies";
@@ -22,6 +23,7 @@ function App() {
           <Route path="/overduepolicies" element={<OverduePolicies />}></Route>
           <Route path="/duepolicies" element={<DuePolicies />}></Route>
           <Route path="/collectionreport" element={<CollectionReport />}></Route>
+          <Route path="/dashboarddetails" element={<DashBoardDeatils />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

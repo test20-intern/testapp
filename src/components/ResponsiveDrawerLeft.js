@@ -24,7 +24,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import { Link } from "react-router-dom";
 
-
 const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
@@ -51,18 +50,49 @@ function ResponsiveDrawer(props) {
     { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
     { text: "Policy Inquiry", icon: <PolicyIcon />, path: "/policyinquiry" },
     { text: "Lapsed Policies", icon: <PolicyIcon />, path: "/lapsedpolicies" },
-    { text: "Overdue policies", icon: <SearchIcon />,path: "/overduepolicies",},
+    {
+      text: "Overdue policies",
+      icon: <SearchIcon />,
+      path: "/overduepolicies",
+    },
     { text: "Due policies", icon: <SearchIcon />, path: "/duepolicies" },
-    { text: "Collection Report", icon: <LibraryBooksIcon />,path: "/collectionreport",},
+    {
+      text: "Collection Report",
+      icon: <LibraryBooksIcon />,
+      path: "/collectionreport",
+    },
 
     // Add other items with their respective icons
-    
   ];
 
   const drawer = (
     <div>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Avatar
+          alt="ceylinco logo 2"
+          src={logo2}
+          sx={{
+            width: 45,
+            height: 45,
+            marginLeft: 4,
+            marginTop:2,
+            display: { xs: "none", sm: "block" },
+          }}
+        />
+
+        <Typography
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{ marginLeft: 2, display: { xs: "none", sm: "block" } }}
+        >
+          Sales App
+        </Typography>
+      </Box>
+
       <Toolbar />
-      <Divider />
+
+
       <List>
         {items.map((item) => (
           <ListItem key={item.text} disablePadding>
@@ -108,9 +138,19 @@ function ResponsiveDrawer(props) {
           <Avatar
             alt="ceylinco logo 2"
             src={logo2}
-            sx={{ width: 45, height: 45, marginRight: 2 }}
+            sx={{
+              width: 45,
+              height: 45,
+              marginRight: 2,
+              display: { xs: "block", sm: "none" },
+            }}
           />
-          <Typography variant="h6" noWrap component="div">
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ display: { xs: "block", sm: "none" } }}
+          >
             Sales App
           </Typography>
         </Toolbar>

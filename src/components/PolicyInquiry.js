@@ -1,6 +1,5 @@
 import React from "react";
 import ResponsiveDrawer from "./ResponsiveDrawerLeft";
-import { purple } from '@mui/material/colors';
 import {
   Box,
   Button,
@@ -9,6 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export default function PolicyInquiry() {
   return (
@@ -57,6 +57,7 @@ export default function PolicyInquiry() {
           <TextField label="SO Code" fullWidth margin="dense" sx={{ mb: 2 }} />
 
           <Stack spacing={10} direction="row" justifyContent="center">
+          <Link to="/Dashboard">
             <Button
               variant="contained"
               sx={{
@@ -70,6 +71,8 @@ export default function PolicyInquiry() {
             >
               Back
             </Button>
+            </Link>
+            
             <Button
               variant="contained"
               sx={{
