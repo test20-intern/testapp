@@ -13,6 +13,7 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-g
 import EditIcon from '@mui/icons-material/Edit';
 import { MobileDatePicker } from "@mui/lab";
 import axios from "axios";
+import swal from 'sweetalert';
 
 // Custom Export Button for the Toolbar
 const CustomExportButton = () => {
@@ -38,11 +39,12 @@ export default function DashBoardDetails() {
   });
 
   const columns = [
-    { field: 'empNo', headerName: 'Employee No', flex: 1 },
-    { field: 'branchCode', headerName: 'Branch Code', flex: 1 },
-    { field: 'name', headerName: 'Name', flex: 1 },
+    // { field: 'Id', headerName: 'Id', flex: 1 },
     { field: 'dob', headerName: 'DOB', flex: 1 },
+    { field: 'empNo', headerName: 'Employee No', flex: 1 },
+    { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'status', headerName: 'Status', flex: 1 },
+    { field: 'branchCode', headerName: 'Branch Code', flex: 1 },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -102,7 +104,7 @@ export default function DashBoardDetails() {
         setEditRow(null);
         fetchData();
         // Add an alert for successful update
-        alert("Employee updated successfully");
+        swal("Employee updated successfully", "You clicked the button!", "success");
       })
       .catch((error) => {
         console.error("Error updating employee:", error);
@@ -136,12 +138,13 @@ export default function DashBoardDetails() {
           <Typography>Employee List</Typography>
           {editRow ? (
             <div>
+            
               <TextField
                 label="Employee No"
                 fullWidth
                 margin="dense"
                 name="empNo"
-                defaultValue={editedEmployee.empNo}
+                value={editedEmployee.empNo}
                 onChange={handleInputChange}
               />
               <TextField
@@ -149,7 +152,7 @@ export default function DashBoardDetails() {
                 fullWidth
                 margin="dense"
                 name="branchCode"
-                defaultValue={editedEmployee.branchCode}
+                value={editedEmployee.branchCode}
                 onChange={handleInputChange}
               />
               <TextField
@@ -157,7 +160,7 @@ export default function DashBoardDetails() {
                 fullWidth
                 margin="dense"
                 name="name"
-                defaultValue={editedEmployee.name}
+                value={editedEmployee.name}
                 onChange={handleInputChange}
               />
               {/* Use the MobileDatePicker component for the date */}
@@ -172,7 +175,7 @@ export default function DashBoardDetails() {
                 fullWidth
                 margin="dense"
                 name="status"
-                defaultValue={editedEmployee.status}
+                value={editedEmployee.status}
                 onChange={handleInputChange}
               />
               <Button

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ResponsiveDrawer from "./ResponsiveDrawerLeft";
 import {
   Box,
@@ -7,17 +7,15 @@ import {
   Stack,
   TextField,
   Typography,
+  MenuItem,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import swal from "sweetalert";
 import axios from "axios";
-import MenuItem from '@mui/material/MenuItem';
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-export default function DashBoardDeatils() {
+export default function DashBoardDetails() {
   const [employeeData, setEmployeeData] = useState({
     empNo: "",
     branchCode: "",
@@ -26,6 +24,7 @@ export default function DashBoardDeatils() {
     status: "",
   });
 
+  const [branchNames, setBranchNames] = useState([]);
   const [validationError, setValidationError] = useState({
     empNo: false,
     branchCode: false,
@@ -33,6 +32,24 @@ export default function DashBoardDeatils() {
     dob: false,
     status: false,
   });
+
+  const [employeeDataList, setEmployeeDataList] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    axios
+      .get("http://localhost:8080/api/v1/employees")
+      .then((response) => setEmployeeDataList(response.data))
+      .catch((error) => console.error("Error fetching employee data:", error));
+
+    axios
+      .get("http://localhost:8080/api/v1/branches")
+      .then((response) => setBranchNames(response.data))
+      .catch((error) => console.error("Error fetching branch names:", error));
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -57,7 +74,10 @@ export default function DashBoardDeatils() {
       if (field === "dob" && !employeeData[field]) {
         errors[field] = true;
         isValid = false;
-      } else if (typeof employeeData[field] === 'string' && employeeData[field].trim() === "") {
+      } else if (
+        typeof employeeData[field] === "string" &&
+        employeeData[field].trim() === ""
+      ) {
         errors[field] = true;
         isValid = false;
       } else {
@@ -77,18 +97,29 @@ export default function DashBoardDeatils() {
       return;
     }
 
+    // Find the selected branch based on branch name
+    const selectedBranch = branchNames.find(
+      (branch) => branch.branchCode === employeeData.branchCode
+    );
+
     // Make an HTTP POST request using Axios
     axios
-      .post("http://localhost:8080/api/v1/add", employeeData)
+      .post("http://localhost:8080/api/v1/add", {
+        ...employeeData,
+        branchCode: selectedBranch?.branchCode,
+      })
       .then((response) => {
         // Handle success, e.g., show a success message
-        console.log("Employee added successfully:", response.data);
-        alert("Employee added successfully!");
+        console.log("Employee added successfully with ID:", response.data);
+        swal("Employee added successfully", "You clicked the button!", "success");
+
+        // Fetch the updated employee list
+        fetchData();
       })
       .catch((error) => {
         // Handle error, e.g., show an error message
         console.error("Error adding employee:", error);
-        alert("Error adding employee. Please try again.");
+        swal("Error adding employee", "You clicked the button!", "error");
       });
   };
 
@@ -98,8 +129,8 @@ export default function DashBoardDeatils() {
       label: "Active",
     },
     {
-      value: "Deactive",
-      label: "Deactive",
+      value: "Not Active",
+      label: "Not Active",
     },
   ];
 
@@ -119,9 +150,9 @@ export default function DashBoardDeatils() {
           },
           "@media (max-width: 600px)": {
             "& > :not(style)": {
-              width: "100%", // Set width to 100% for all children when screen width is under 600px
-              marginLeft: 5, // Remove left margin for smaller screens
-              marginRight: 5, // Remove right margin for smaller screens
+              width: "100%",
+              marginLeft: 5,
+              marginRight: 5,
             },
           },
         }}
@@ -145,14 +176,21 @@ export default function DashBoardDeatils() {
             required
             error={validationError.branchCode}
             helperText={validationError.branchCode ? "Required field" : ""}
-            label="Branch Code"
+            label="Branch Name"
             fullWidth
             margin="dense"
             sx={{ mb: 1 }}
             name="branchCode"
             value={employeeData.branchCode}
             onChange={handleInputChange}
-          />
+            select
+          >
+            {branchNames.map((branch) => (
+              <MenuItem key={branch.branchCode} value={branch.branchCode}>
+                {branch.branchName}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <TextField
             required
@@ -168,13 +206,13 @@ export default function DashBoardDeatils() {
           />
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker']} >
-              <DatePicker
-                label="DOB"
-                value={employeeData.dob}
-                onChange={(newValue) => setEmployeeData({ ...employeeData, dob: newValue })}
-              />
-            </DemoContainer>
+            <DatePicker
+              label="DOB"
+              value={employeeData.dob}
+              onChange={(newValue) =>
+                setEmployeeData({ ...employeeData, dob: newValue })
+              }
+            />
           </LocalizationProvider>
 
           <TextField
@@ -198,24 +236,22 @@ export default function DashBoardDeatils() {
             ))}
           </TextField>
 
-          <Stack spacing={10} direction="row" justifyContent="center">
-            <Link to="/Dashboard">
-              <Button
-                variant="contained"
-                sx={{
+          <Stack spacing={2} direction="row" justifyContent="center">
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#760616",
+                "&:hover": {
                   backgroundColor: "#760616",
-                  "&:hover": {
-                    backgroundColor: "#760616",
-                  },
-                  width: "90px",
-                  maxWidth: "100%",
-                  marginTop: 2,
-                }}
-                onClick={handleAddEmployee}
-              >
-                ADD
-              </Button>
-            </Link>
+                },
+                width: "90px",
+                maxWidth: "100%",
+                marginTop: 2,
+              }}
+              onClick={handleAddEmployee}
+            >
+              ADD
+            </Button>
           </Stack>
         </Paper>
       </Box>
