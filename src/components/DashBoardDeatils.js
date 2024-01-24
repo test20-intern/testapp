@@ -14,6 +14,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import swal from "sweetalert";
 import axios from "axios";
+import { differenceInYears } from "date-fns";
 
 export default function DashBoardDetails() {
   const [employeeData, setEmployeeData] = useState({
@@ -68,12 +69,23 @@ export default function DashBoardDetails() {
   const validateForm = () => {
     const errors = {};
     let isValid = true;
-
+  
     // Validate each required field
     for (const field in employeeData) {
       if (field === "dob" && !employeeData[field]) {
         errors[field] = true;
         isValid = false;
+      } else if (
+        field === "dob" &&
+        differenceInYears(new Date(), new Date(employeeData[field])) < 18
+      ) {
+        errors[field] = true;
+        isValid = false;
+        swal(
+          "Validation failed",
+          "Please enter a valid birthdate. Age must be 18 or above.",
+          "error"
+        );
       } else if (
         typeof employeeData[field] === "string" &&
         employeeData[field].trim() === ""
@@ -84,11 +96,24 @@ export default function DashBoardDetails() {
         errors[field] = false;
       }
     }
-
+  
     setValidationError(errors);
+  
+    if (!isValid) {
+      // Only display the generic error message if the issue is not related to the date of birth
+      if (!errors.dob) {
+        swal(
+          "Validation failed",
+          "Please fill in all required fields correctly.",
+          "error"
+        );
+      }
+    }
+  
     return isValid;
   };
-
+  
+  
   const handleAddEmployee = () => {
     // Validate the form before making the request
     if (!validateForm()) {
@@ -205,7 +230,7 @@ export default function DashBoardDetails() {
             onChange={handleInputChange}
           />
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <LocalizationProvider dateAdapter ={AdapterDayjs}>
             <DatePicker
               label="DOB"
               value={employeeData.dob}
